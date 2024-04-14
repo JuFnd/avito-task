@@ -16,7 +16,6 @@ CREATE TABLE tags (
 
 CREATE TABLE banners (
                       id INTEGER PRIMARY KEY,
-                      is_active BOOLEAN DEFAULT TRUE,
                       created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
                       feature_id INTEGER,
                       FOREIGN KEY (feature_id) REFERENCES features(id)
@@ -31,6 +30,7 @@ CREATE TABLE banner_tag (
 CREATE TABLE versions (
                       id SERIAL PRIMARY KEY,
                       banner_id INTEGER REFERENCES banners ON DELETE CASCADE,
+                      is_active BOOLEAN DEFAULT TRUE,
                       data JSONB NOT NULL,
                       updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -45,10 +45,10 @@ INSERT INTO tags (name) VALUES
                             ('Tag 2'),
                             ('Tag 3');
 
-INSERT INTO banners (id, is_active, created_at, feature_id) VALUES
-                                                                (1, true, NOW(), 1),
-                                                                (2, true, NOW(), 2),
-                                                                (3, true, NOW(), 3);
+INSERT INTO banners (id, created_at, feature_id) VALUES
+                                                                (1, NOW(), 1),
+                                                                (2, NOW(), 2),
+                                                                (3, NOW(), 3);
 
 INSERT INTO banner_tag (banner_id, tag_id) VALUES
                                                (1, 1),
@@ -56,12 +56,12 @@ INSERT INTO banner_tag (banner_id, tag_id) VALUES
                                                (2, 2),
                                                (3, 3);
 
-INSERT INTO versions (banner_id, data, updated_at) VALUES
-                                                       (2, '{"content": "Banner 2"}', NOW()),
-                                                       (3, '{"content": "Banner 3"}', NOW());
+INSERT INTO versions (banner_id, data, is_active, updated_at) VALUES
+                                                       (2, '{"content": "Banner 2"}', TRUE,NOW()),
+                                                       (3, '{"content": "Banner 3"}', TRUE,NOW());
 
-INSERT INTO versions (banner_id, data, updated_at) VALUES
-                                                       (1, '{"content": "Banner 1 - Version 1"}', NOW() - INTERVAL '3 days'),
-                                                       (1, '{"content": "Banner 1 - Version 2"}', NOW() - INTERVAL '2 days'),
-                                                       (1, '{"content": "Banner 1 - Version 3"}', NOW() - INTERVAL '1 day'),
-                                                       (1, '{"content": "Banner 1 - Version 4"}', NOW());
+INSERT INTO versions (banner_id, data, is_active, updated_at) VALUES
+                                                       (1, '{"content": "Banner 1 - Version 1"}', TRUE,NOW() - INTERVAL '3 days'),
+                                                       (1, '{"content": "Banner 1 - Version 2"}', FALSE,NOW() - INTERVAL '2 days'),
+                                                       (1, '{"content": "Banner 1 - Version 3"}', FALSE,NOW() - INTERVAL '1 day'),
+                                                       (1, '{"content": "Banner 1 - Version 4"}', FALSE,NOW());
