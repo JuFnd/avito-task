@@ -13,9 +13,17 @@ type ICore interface {
 	GetUserRole(ctx context.Context, id int64) (string, error)
 }
 
-func MethodMiddleware(next http.Handler, method string, logger *slog.Logger) http.Handler {
+func MethodMiddleware(next http.Handler, methods []string, logger *slog.Logger) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Method != method {
+		isMethod := false
+		for _, val := range methods {
+			if r.Method == val {
+				isMethod = true
+				break
+			}
+		}
+
+		if !isMethod {
 			util.SendResponse(w, r, http.StatusMethodNotAllowed, nil, variables.StatusMethodNotAllowedError, nil, logger)
 			return
 		}
@@ -42,7 +50,7 @@ func AuthorizationMiddleware(next http.Handler, core ICore, logger *slog.Logger)
 	})
 }
 
-func PermissionsMiddleware(next http.Handler, core ICore, role string, logger *slog.Logger) http.Handler {
+func PermissionsMiddleware(next http.Handler, core ICore, roles []string, logger *slog.Logger) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		userId, isAuth := r.Context().Value(variables.UserIDKey).(int64)
 		if !isAuth {
@@ -55,7 +63,17 @@ func PermissionsMiddleware(next http.Handler, core ICore, role string, logger *s
 			util.SendResponse(w, r, http.StatusInternalServerError, nil, variables.StatusInternalServerError, err, logger)
 			return
 		}
-		if userRole != role {
+		r = r.WithContext(context.WithValue(r.Context(), variables.RoleKey, userRole))
+
+		isPermitted := false
+		for _, val := range roles {
+			if userRole == val {
+				isPermitted = true
+				break
+			}
+		}
+
+		if !isPermitted {
 			util.SendResponse(w, r, http.StatusForbidden, nil, variables.StatusForbiddenError, nil, logger)
 			return
 		}

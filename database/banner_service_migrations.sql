@@ -15,7 +15,7 @@ CREATE TABLE tags (
 );
 
 CREATE TABLE banners (
-                      id INTEGER PRIMARY KEY,
+                      id SERIAL PRIMARY KEY,
                       created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
                       feature_id INTEGER,
                       FOREIGN KEY (feature_id) REFERENCES features(id)

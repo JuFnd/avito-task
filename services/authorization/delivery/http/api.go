@@ -50,13 +50,13 @@ func GetAuthorizationApi(authCore *usecase.Core, authLogger *slog.Logger) *API {
 	// Signin handler
 	api.mux.Handle("/signin", middleware.MethodMiddleware(
 		http.HandlerFunc(api.Signin),
-		http.MethodPost,
+		variables.MethodPost,
 		api.logger))
 
 	// Signup handler
 	api.mux.Handle("/signup", middleware.MethodMiddleware(
 		http.HandlerFunc(api.Signup),
-		http.MethodPost,
+		variables.MethodPost,
 		api.logger))
 
 	// Logout handler
@@ -64,13 +64,8 @@ func GetAuthorizationApi(authCore *usecase.Core, authLogger *slog.Logger) *API {
 		middleware.AuthorizationMiddleware(
 			http.HandlerFunc(api.LogoutSession),
 			api.core, api.logger),
-		http.MethodPost,
+		variables.MethodPost,
 		api.logger))
-
-	// Serve the Swagger JSON file
-	api.mux.HandleFunc("/swagger.yaml", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, "../../docs/swagger.yaml")
-	})
 
 	return api
 }
@@ -173,8 +168,8 @@ func (api *API) Signup(w http.ResponseWriter, r *http.Request) {
 // @Failure 500 {string} string variables.StatusInternalServerError
 // @Router /logout [post]
 func (api *API) LogoutSession(w http.ResponseWriter, r *http.Request) {
-	session, isAuth := r.Context().Value(variables.SessionIDKey).(*http.Cookie)
-	if !isAuth {
+	session, err := r.Cookie("session_id")
+	if err != nil {
 		util.SendResponse(w, r, http.StatusUnauthorized, variables.StatusUnauthorizedError, variables.SessionNotFoundError, nil, api.logger)
 		return
 	}

@@ -1,5 +1,7 @@
 package variables
 
+import "net/http"
+
 // Server Errors
 const (
 	JsonPackFailedError     = "Failed to marshal JSON object"
@@ -39,13 +41,13 @@ const (
 // Middleware types
 type (
 	contextKey string
-	sessionKey string
+	roleKey    string
 )
 
 // Middleware keys constants
 const (
-	UserIDKey    contextKey = "userId"
-	SessionIDKey sessionKey = "sessionId"
+	UserIDKey contextKey = "userId"
+	RoleKey   roleKey    = "role"
 )
 
 // Configs types
@@ -117,6 +119,7 @@ const (
 	GetProfileError                 = "Get profile failed"
 	GetProfileRoleError             = "Get profile role failed"
 	GrpcRecievError                 = "gRPC recieve error"
+	CannotCreateBanner              = "Can not create banner"
 )
 
 // Core variables
@@ -144,9 +147,19 @@ const (
 	LoginRegexp = `^[a-zA-Z0-9]+$`
 )
 
+// Methods
+var (
+	MethodGet          = []string{http.MethodGet}
+	MethodPost         = []string{http.MethodPost}
+	MethodGetAndPost   = []string{http.MethodGet, http.MethodPost}
+	MethodsDeletePatch = []string{http.MethodDelete, http.MethodPatch}
+)
+
 // Roles
-const (
-	AdminRole = "admin"
+var (
+	AdminRole    = []string{"admin"}
+	UserRole     = []string{"user"}
+	AdminAndUser = []string{"admin", "user"}
 )
 
 // Query params

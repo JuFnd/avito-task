@@ -12,7 +12,10 @@ import (
 )
 
 type IBannerRepository interface {
-	GetBanners(featureID int64, tagIDs []int64, limit, offset int64) ([]models.Banner, error)
+	AddBanner(tagIDs []int64, featureID int64, content string) error
+	UpdateBanner(id int64, tagIds []int64, featureID int64, content string) error
+	DeleteBanner(id int64) error
+	GetBanners(userRole string, featureID int64, tagIDs []int64, limit, offset int64) ([]models.Banner, error)
 	UserBanner(tagID int64, featureID int64, useLastRevision bool) (*models.Banner, error)
 }
 
@@ -54,14 +57,41 @@ func (core *Core) UserBanner(tagID int64, featureID int64, useLastRevision bool)
 	return banner, nil
 }
 
-func (core *Core) GetBanners(featureID int64, tagIDs []int64, limit, offset int64) ([]models.Banner, error) {
-	banners, err := core.bannersRepository.GetBanners(featureID, tagIDs, limit, offset)
+func (core *Core) GetBanners(userRole string, featureID int64, tagIDs []int64, limit, offset int64) ([]models.Banner, error) {
+	banners, err := core.bannersRepository.GetBanners(userRole, featureID, tagIDs, limit, offset)
 	if err != nil {
 		core.logger.Error(variables.BannerNotFoundError, ": %w", err)
 		return nil, err
 	}
 
 	return banners, nil
+}
+
+func (core *Core) AddBanner(tagIDs []int64, featureID int64, content string) error {
+	err := core.bannersRepository.AddBanner(tagIDs, featureID, content)
+	if err != nil {
+		core.logger.Error(variables.CannotCreateBanner, err)
+		return err
+	}
+	return nil
+}
+
+func (core *Core) UpdateBanner(id int64, tagIds []int64, featureID int64, content string) error {
+	err := core.bannersRepository.UpdateBanner(id, tagIds, featureID, content)
+	if err != nil {
+		core.logger.Error(variables.BannerNotFoundError, ": %w", err)
+		return err
+	}
+	return nil
+}
+
+func (core *Core) DeleteBanner(id int64) error {
+	err := core.bannersRepository.DeleteBanner(id)
+	if err != nil {
+		core.logger.Error(variables.BannerNotFoundError, ": %w", err)
+		return err
+	}
+	return nil
 }
 
 func (core *Core) GetUserRole(ctx context.Context, id int64) (string, error) {
