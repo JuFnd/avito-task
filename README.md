@@ -42,6 +42,10 @@ Body:
 
 localhost:8080/signup
 
+localhost:8080/signin
+
+localhost:8080/logout
+
 {
    "login": "test",
    "password": "test"
