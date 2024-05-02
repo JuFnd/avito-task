@@ -1,3 +1,0 @@
-{"time":"2024-04-15T05:45:18.2052474+03:00","level":"ERROR","msg":"Succesful response","DELETE":"200","/api/v1/banner/12":null}
-{"time":"2024-04-15T05:45:25.0352799+03:00","level":"ERROR","msg":"Method not allowed","DELETE":"405","/api/v1/user_banner":null}
-{"time":"2024-04-15T05:45:32.2671077+03:00","level":"ERROR","msg":"Succesful response","GET":"200","/api/v1/user_banner":null}
