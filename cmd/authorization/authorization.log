@@ -1,2 +1,0 @@
-{"time":"2024-04-15T00:14:41.9057728+03:00","level":"ERROR","msg":"Method not allowed","GET":"405","/signin":null}
-{"time":"2024-04-15T00:14:48.1726386+03:00","level":"ERROR","msg":"Succesful response","POST":"200","/signin":null}
